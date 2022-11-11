@@ -4,6 +4,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import tech.csm.entity.BirthCertificate;
 import tech.csm.entity.Role;
 import tech.csm.entity.User1;
 
@@ -15,6 +16,7 @@ public class HibernateUtil {
 		Configuration cfg=new Configuration().configure();
 		cfg.addAnnotatedClass(Role.class);
 		cfg.addAnnotatedClass(User1.class);
+		cfg.addAnnotatedClass(BirthCertificate.class);
 		SessionFactory sessionFactory=cfg.buildSessionFactory();
 		session=sessionFactory.openSession();
 	}

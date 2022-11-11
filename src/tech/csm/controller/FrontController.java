@@ -2,7 +2,10 @@ package tech.csm.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,8 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tomcat.util.http.fileupload.FileUpload;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.hibernate.query.internal.BindingTypeHelper;
 
+import tech.csm.entity.BirthCertificate;
 import tech.csm.entity.Role;
 import tech.csm.entity.User1;
 import tech.csm.service.UserServiceImpl;
@@ -132,7 +138,81 @@ public class FrontController extends HttpServlet {
 			req.setAttribute("uaUserList", seQueryUp.list());
 			req.getRequestDispatcher("userView/ua_user_list.jsp").forward(req, resp);
 			
+		}else if(endPoint.equals("/approve")) {
+			
+			User1 usr=session.get(User1.class, req.getParameter("uId").trim());
+			usr.setStatus("APPR");
+			Transaction tx = session.beginTransaction();
+			session.update(usr);
+			tx.commit();
+			
+			resp.sendRedirect("./approveUser");
+			
+			
+		}else if(endPoint.equals("/getbirthcertificateform")) {
+			
+			Query<BirthCertificate> seQueryBirth=session.createQuery("from BirthCertificate where appliedBy.userId=?1");
+			seQueryBirth.setParameter(1, ((User1)req.getSession(false).getAttribute("loggedInUser")).getUserId());
+			req.setAttribute("appList",seQueryBirth.list());
+			req.getRequestDispatcher("userView/get_birth_certificate_form.jsp").forward(req, resp);
+			
+		}else if(endPoint.equals("/applyBirthCertificate")) {
+			BirthCertificate bc=new BirthCertificate();
+			bc.setChildName(req.getParameter("childname"));		
+			try {
+				bc.setChildDob(new SimpleDateFormat("dd/MM/yyyy hh:mm a").parse(req.getParameter("dob")));
+			} catch (ParseException e) {				
+				e.printStackTrace();
+			}
+			bc.setBloodGroup(req.getParameter("bloodgroup"));
+			bc.setChildWeight(Double.parseDouble(req.getParameter("weight")));
+			bc.setChildGender(req.getParameter("gender"));
+			bc.setHospitaName(req.getParameter("hospitalname"));
+			bc.setHospitalDoc(FileUploadUtil.getFilePath(req.getPart("hospitaldocfile")));
+			bc.setFatherName(req.getParameter("fathername"));
+			bc.setMotherName(req.getParameter("mothername"));
+			bc.setAddress(req.getParameter("address"));
+			bc.setAddressProfDoc(FileUploadUtil.getFilePath(req.getPart("addressproof")));
+			bc.setAppliedOn(new Date());
+			bc.setAppliedBy((User1)req.getSession(false).getAttribute("loggedInUser"));
+			bc.setApprovedBy(null);
+			bc.setApprovedOn(null);
+			bc.setAppStatus("PEND");
+			Integer cId;
+			Transaction tx = session.beginTransaction();
+			cId=(int)session.save(bc);
+			tx.commit();
+			
+			req.getSession().setAttribute("msg", "Your application id : "+cId+" applied successfully but pending for approval");
+			resp.sendRedirect("./applyBirthCertificate");
+			
+		}else if(endPoint.equals("/approveBirthCertificate")) {
+			Query<BirthCertificate> seQueryBirth=session.createQuery("from BirthCertificate where appStatus='PEND'");
+			req.setAttribute("pendAppList",seQueryBirth.list());
+			req.getRequestDispatcher("userView/approve_certificate.jsp").forward(req, resp);
+			
+			
+		}else if(endPoint.equals("/approveCertificate")) {
+			BirthCertificate seQueryBirth=session.get(BirthCertificate.class,Integer.parseInt(req.getParameter("cId")));
+			seQueryBirth.setAppStatus("APPR");
+			seQueryBirth.setApprovedBy((User1)req.getSession(false).getAttribute("loggedInUser"));
+			seQueryBirth.setApprovedOn(new java.util.Date());
+			Transaction tx1 = session.beginTransaction();
+			session.update(seQueryBirth);
+			tx1.commit();
+			req.getRequestDispatcher("/approveBirthCertificate").forward(req, resp);
+			
+			
+		}else if(endPoint.equals("/getCertificate")) {
+			Integer cId=Integer.parseInt(req.getParameter("cId"));
+			req.setAttribute("certificate", session.get(BirthCertificate.class, cId));
+			req.getRequestDispatcher("userView/certificate.jsp").forward(req, resp);
+			
+			
 		}
+		
+		
+		
 	}
 
 	@Override

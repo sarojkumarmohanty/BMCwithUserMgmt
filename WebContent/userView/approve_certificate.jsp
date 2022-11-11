@@ -42,25 +42,26 @@
 					<thead>
 						<tr>
 							<th>Sl#</th>
-							<th>User Id</th>
-							<th>User Name</th>
-							<th>email</th>
-							<th>Phone no</th>
-							<th>Aadhar</th>
+							<th>certificateId</th>
+							<th>Child Name</th>
+							<th>Father Name</th>
+							<th>Dob</th>
+							<th>Blood Group</th>
 							<th>Action</th>
 						</tr>
 					
 					</thead>
 					<tbody>
-						<c:forEach var="usr" items="${uaUserList}" varStatus="counter">
+						<c:forEach var="usr" items="${pendAppList}" varStatus="counter">
 						<tr>
 							<td>${counter.count}</td>
-							<td>${usr.userId}</td>
-							<td>${usr.userName}</td>
-							<td>${usr.email}</td>
-							<td>${usr.phoneNo}</td>
-							<td align="center"><a href="http://localhost:8080/BMCwithUserMgmt/download?file_path=${usr.aadharIdPath}"><i class="fa-solid fa-cloud-arrow-down"></i></a></td>
-							<td><a href="http://localhost:8080/BMCwithUserMgmt/approve?uId=${usr.userId}"><i class="fa-solid fa-square-check"></i></a></td>
+							<td>${usr.certificateId}</td>
+							<td>${usr.childName}</td>
+							<td>${usr.fatherName}</td>
+							<td>${usr.childDob}</td>
+							<td>${usr.bloodGroup}</td>
+<%-- 							<td align="center"><a href="http://localhost:8080/BMCwithUserMgmt/download?file_path=${usr.aadharIdPath}"><i class="fa-solid fa-cloud-arrow-down"></i></a></td>
+ --%>							<td><a href="http://localhost:8080/BMCwithUserMgmt/approveCertificate?cId=${usr.certificateId}"><i class="fa-solid fa-square-check"></i></a></td>
 						</tr>
 						</c:forEach>
 					

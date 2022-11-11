@@ -50,8 +50,6 @@
 					id="regdform" enctype="multipart/form-data"
 					onsubmit="return validateRegdForm();">
 
-					<!-- <input type="hidden" name="rollNo" > -->
-
 					<div class="row">
 						<div class="col-md-4">
 							<lable class="text-warning font-weight-bold">User Id<sup

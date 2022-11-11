@@ -10,10 +10,10 @@
 								Officers</a></li>
 					</c:when>
 					<c:when test="${loggedInUser.role.roleId eq 2}">
-						<li class="nav-item"><a class="nav-link text-dark" href="#">Approve</a></li>
+						<li class="nav-item"><a class="nav-link text-dark" href="http://localhost:8080/BMCwithUserMgmt/approveBirthCertificate">Approve</a></li>
 					</c:when>
 					<c:when test="${loggedInUser.role.roleId eq 3}">
-						<li class="nav-item"><a class="nav-link text-dark" href="#">Apply</a></li>
+						<li class="nav-item"><a class="nav-link text-dark" href="http://localhost:8080/BMCwithUserMgmt/getbirthcertificateform">Apply</a></li>
 					</c:when>
 				</c:choose>
 				<li class="nav-item"><a class="nav-link text-dark" href="http://localhost:8080/BMCwithUserMgmt/logOut">LogOut</a></li>
